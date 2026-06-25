@@ -4,17 +4,33 @@ const jwt = require("jsonwebtoken")
 
 const getAllBblogs = async(req,res)=>{
   try{
+    let userBlogs= await Blogs.find({});
+    console.log(userBlogs)
+    res.send(userBlogs)
+  }
+  catch (error) {
+    res.status(401).send("Unauthorized access");
+}
+}
+
+const getDetails = async(req,res)=>{
+  let {id} = req.params;
+  let Details = await Blogs.findById(id);
+  res.send(Details);
+}
+
+const getUserBlogs = async(req,res)=>{
+  try{
     let header = req.headers.authorization;
-    let token = header.split("")[1];
+    let token = header.split(" ")[1];
     let decoded = jwt.verify(token,"thisisyourprivatekey");
     let userBlogs= await Blogs.find({createdBy:decoded.id});
     console.log(userBlogs)
     res.send(userBlogs)
   }
   catch (error) {
-    res.status(401).send("Unauthorized access");
-  }
-
+    res.send('unauthorized access')
+}
 }
 
 
@@ -30,14 +46,14 @@ const addBlog = async (req, res) => {
       return res.status(401).json({ message: "Access Denied: Token formatting invalid" });
     }
 
-  
+    console.log(token);
     const decoded = jwt.verify(token, "thisisyourprivatekey");
-    
+    console.log(decoded);
 
     const data = req.body;
     data.createdBy=decoded.id;
     const newblog = await Blogs.create(data);
-    
+    console.log(newblog)
     return res.status(201).send(newblog);
     
   } catch (error) {
@@ -49,8 +65,7 @@ const addBlog = async (req, res) => {
 };
 
 const updateBlog = async(req,res)=>{
-
-   
+   try{
     let header = req.headers.authorization;
 
     if(!header){
@@ -63,17 +78,35 @@ const updateBlog = async(req,res)=>{
         return res.status(400).send("no token provided")
     }
 
-    jwt.verify(token,"thisisyourprivatekey")
+    let decoded = jwt.verify(token,"thisisyourprivatekey")
 
-    let id = req.query.id;
+    let {id} = req.params;
     let data = req.body;
 
     let updatedblog  = await Blogs.findByIdAndUpdate(id,data,{new:true});
     res.send(updatedblog)
+  }
+  catch(err){
+    res.send(err);
+  }
 }
 
 const deleteBlog = async(req,res)=>{
-    let id = req.query.id;
+  try{
+     let header = req.headers.authorization;
+
+    if(!header){
+        return res.status(400).send("no header provided")
+    }
+    
+    let token = header.split(" ")[1]
+
+      if(!token){
+        return res.status(400).send("no token provided")
+    }
+
+    let decoded = jwt.verify(token,"thisisyourprivatekey")
+    let {id} = req.params;
 
     let deletedblog  = await Blogs.findByIdAndDelete(id);
 
@@ -82,8 +115,11 @@ const deleteBlog = async(req,res)=>{
     }
 
     res.send("blog deleted")
-
+  }
+  catch(error){
+    res.send(error);
+  }
 }
 
 
-module.exports = {getAllBblogs,addBlog,updateBlog,deleteBlog};
+module.exports = {getAllBblogs,getUserBlogs,addBlog,updateBlog,deleteBlog,getDetails}

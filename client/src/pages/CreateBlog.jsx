@@ -28,7 +28,7 @@ const CreateBlog = () => {
     }
   })
     .then((res)=>{
-      console.log(res.data)
+      console.log("this is data")
       navigate('/dashboard')
     })
     .catch((err)=>{

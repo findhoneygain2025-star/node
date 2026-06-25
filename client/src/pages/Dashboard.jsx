@@ -1,117 +1,173 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import axios from "axios"
+import { useState } from "react";
+
+
+
 
 const UserDashboard = () => {
-  const blogs = [
-    {
-      id: 1,
-      title: "React Basics",
-      author: "John Doe",
-      image:
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-      description:
-        "Learn the fundamentals of React and build interactive UI easily.",
-    },
-    {
-      id: 2,
-      title: "Node.js Backend",
-      author: "Sarah Smith",
-      image:
-        "https://images.unsplash.com/photo-1515879218367-8466d910aaa4",
-      description:
-        "Understand how to create backend APIs using Node.js and Express.",
-    },
-    {
-      id: 3,
-      title: "MongoDB Guide",
-      author: "Alex Johnson",
-      image:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3",
-      description:
-        "Store and manage data efficiently using MongoDB database.",
-    },
-  ];
+    const [blogs, setBlogs] = useState([]);
+      const token = localStorage.getItem("token");
+
+   axios.get("http://localhost:3000/blog/dashboard",{
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).then((res)=>{
+      setBlogs(res.data);
+    })
+    .catch((err)=>{
+      console.log(err.response.data)
+    })
+
+    async function handleDelete (id){
+      try {
+        await axios.delete(`http://localhost:3000/blog/delete/${id}`,{
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== id));
+        
+        console.log("Blog deleted successfully");
+    } catch (err) {
+        console.error("Error deleting blog:", err.response?.data || err.message);
+    }
+    }
+
+    async function handleUpdate(id,currtitle){
+      const newTitle = prompt("Enter new title:",currtitle);
+      if (!newTitle) return;
+      try {
+        const response = await axios.put(`http://localhost:3000/blog/update/${id}`, {
+            title: newTitle
+        },{
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        setBlogs(prevBlogs => 
+            prevBlogs.map(blog => blog._id === id ? { ...blog, title: newTitle } : blog)
+        );
+
+        console.log("Blog updated successfully", response.data);
+    } catch (err) {
+        console.error("Error updating blog:", err.response?.data || err.message);
+    }
+
+    }
 
   const pageStyle = {
-    padding: "30px",
-    backgroundColor: "#f4f4f4",
-    minHeight: "100vh",
-    fontFamily: "Arial",
-  };
+  padding: "5%", // Fluid padding for small screens
+  backgroundColor: "#f8f9fa",
+  minHeight: "100vh",
+  fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif", // Clean modern font stack
+};
 
-  const topBar = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "30px",
-  };
+const topBar = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "24px",
+  flexWrap: "wrap", // Wraps nicely if title and button collide on tiny phones
+  gap: "15px",
+};
 
-  const headingStyle = {
-    color: "#333",
-  };
+const headingStyle = {
+  color: "#212529",
+  fontSize: "1.75rem",
+  margin: 0,
+};
 
-  const createBtn = {
-    padding: "10px 20px",
-    backgroundColor: "#28a745",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    textDecoration: "none",
-    fontWeight: "bold",
-  };
+const createBtn = {
+  padding: "8px 16px",
+  backgroundColor: "#198754",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  textDecoration: "none",
+  fontWeight: "600",
+  fontSize: "0.9rem",
+  boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+};
 
-  const blogContainer = {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-    gap: "20px",
-  };
+const blogContainer = {
+  display: "grid",
+  // 240px is the sweet spot for clean, compact cards on mobile and desktop alike
+  gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", 
+  gap: "20px",
+  width: "100%", // Let it utilize the full page container width smoothly
+};
 
-  const cardStyle = {
-    backgroundColor: "#fff",
-    borderRadius: "10px",
-    overflow: "hidden",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-  };
+const cardStyle = {
+  backgroundColor: "#fff",
+  borderRadius: "8px",
+  overflow: "hidden",
+  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04)",
+  display: "flex",
+  flexDirection: "column",
+  transition: "transform 0.2s ease",
+};
 
-  const imageStyle = {
-    width: "100%",
-    height: "200px",
-    objectFit: "cover",
-  };
+const imageStyle = {
+  width: "100%",
+  height: "130px", 
+  objectFit: "cover",
+};
 
-  const contentStyle = {
-    padding: "15px",
-  };
+const contentStyle = {
+  padding: "12px",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  flexGrow: 1,
+};
 
-  const buttonContainer = {
-    marginTop: "15px",
-    display: "flex",
-    gap: "10px",
-  };
+const titleStyle = {
+  fontSize: "1.05rem", 
+  color: "#212529",
+  margin: "0 0 12px 0",
+  fontWeight: "600",
+  lineHeight: "1.3",
+};
 
-  const updateBtn = {
-    padding: "8px 15px",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  };
+const buttonContainer = {
+  display: "flex",
+  gap: "8px",
+  width: "100%",
+};
 
-  const deleteBtn = {
-    padding: "8px 15px",
-    backgroundColor: "#dc3545",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  };
+const updateBtn = {
+  flex: 1,
+  padding: "6px 12px",
+  backgroundColor: "#0d6efd",
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "0.85rem",
+  fontWeight: "500",
+};
 
-  return (
+const deleteBtn = {
+  flex: 1,
+  padding: "6px 12px",
+  backgroundColor: "#dc3545",
+  color: "#fff",
+  border: "none",
+  borderRadius: "4px",
+  cursor: "pointer",
+  fontSize: "0.85rem",
+  fontWeight: "500",
+};
+
+return (
   <div>
-    <Navbar/>
-      <div style={pageStyle}>
+    <Navbar />
+    <div style={pageStyle}>
       <div style={topBar}>
         <h1 style={headingStyle}>User Dashboard</h1>
 
@@ -122,22 +178,20 @@ const UserDashboard = () => {
 
       <div style={blogContainer}>
         {blogs.map((blog) => (
-          <div key={blog.id} style={cardStyle}>
+          <div key={blog._id} style={cardStyle}>
             <img src={blog.image} alt={blog.title} style={imageStyle} />
 
             <div style={contentStyle}>
-              <h2>{blog.title}</h2>
-
-              <p>
-                <strong>Author:</strong> {blog.author}
-              </p>
-
-              <p>{blog.description}</p>
+              <h2 style={titleStyle}>{blog.title}</h2>
 
               <div style={buttonContainer}>
-                <button style={updateBtn}>Update</button>
+                <button style={updateBtn} onClick={() => handleUpdate(blog._id, blog.title)}>
+                  Update
+                </button>
 
-                <button style={deleteBtn}>Delete</button>
+                <button style={deleteBtn} onClick={() => handleDelete(blog._id)}>
+                  Delete
+                </button>
               </div>
             </div>
           </div>
@@ -145,7 +199,7 @@ const UserDashboard = () => {
       </div>
     </div>
   </div>
-  );
+);
 };
 
 export default UserDashboard;

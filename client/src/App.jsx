@@ -9,6 +9,7 @@ import UserContext from './UserContext'
 import { useContext } from 'react'
 import UserDashboard from './pages/Dashboard'
 import CreateBlog from './pages/CreateBlog'
+import BlogDetails from './pages/BlogDetails'
 
 const App = () => {
 
@@ -43,6 +44,7 @@ const App = () => {
     <div>
       <Routes>
         <Route path='/' element={<Home/>}/>
+        <Route path="/blog/:id" element={<BlogDetails />} />
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/dashboard' element={user?<UserDashboard/>:<Login/>}/>
