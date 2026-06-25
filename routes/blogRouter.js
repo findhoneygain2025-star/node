@@ -1,11 +1,13 @@
 const express = require('express');
-const { getAllBblogs, addBlog, updateBlog, deleteBlog ,getUserBlogs,getDetails } = require('../controllers/blogControllers');
+const { getAllBblogs, addBlog, updateBlog, deleteBlog ,getUserBlogs,getDetails,addComment } = require('../controllers/blogControllers');
 const checkLogin = require('../middlewares/checkLogin');
 
 const router = express.Router();
 
 
 router.get('/',getAllBblogs)
+
+router.post('/:id/comment', addComment);
 
 router.get('/details/:id',getDetails);
 

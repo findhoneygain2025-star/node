@@ -121,5 +121,37 @@ const deleteBlog = async(req,res)=>{
   }
 }
 
+const addComment = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const { text, username } = req.body; 
 
-module.exports = {getAllBblogs,getUserBlogs,addBlog,updateBlog,deleteBlog,getDetails}
+        if (!text) {
+            return res.status(400).send({ message: "Comment text cannot be empty" });
+        }
+        const updatedBlog = await Blogs.findByIdAndUpdate(
+            id,
+            {
+                $push: {
+                    comments: {
+                        username: username,
+                        text: text
+                    }
+                }
+            },
+            { new: true } 
+        );
+
+        if (!updatedBlog) {
+            return res.status(404).send({ message: "Blog post not found" });
+        }
+
+        res.status(201).send(updatedBlog.comments);
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        res.status(500).send({ message: "Failed to post comment", error: error.message });
+    }
+};
+
+
+module.exports = {getAllBblogs,getUserBlogs,addBlog,updateBlog,deleteBlog,getDetails,addComment}

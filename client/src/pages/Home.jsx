@@ -26,6 +26,20 @@ const Home = () => {
 
   }, []);
 
+  const formatShortDate = (dateString) => {
+  if (!dateString) return "No date";
+  
+  const date = new Date(dateString);
+  
+  const day = date.getDate(); 
+  
+  const month = date.toLocaleString('en-US', { month: 'short' }); 
+  
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+};
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -62,7 +76,7 @@ const Home = () => {
 
               <div className="p-5">
                 <p className="text-sm text-gray-500 mb-2">
-                  By {blog.author} • {blog.date}
+                  By {blog.author} • {formatShortDate(blog.createdAt)}
                 </p>
 
                 <h3 className="text-xl font-semibold mb-3">

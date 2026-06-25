@@ -2,12 +2,42 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from "../components/Navbar";
+import { useContext } from 'react';
+import UserContext from '../UserContext';
 
 const BlogDetails = () => {
-  const { id } = useParams(); // Grabs the ':id' value from the URL
+  const { id } = useParams(); 
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [newComment, setNewComment] = useState("");
+
+let { user } = useContext(UserContext);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault(); 
+    
+    if (!newComment.trim()) return; 
+
+    try {
+        const username = user.name; 
+
+        const response = await axios.post(`http://localhost:3000/blog/${id}/comment`, {
+            text: newComment,
+            username: username,
+        });
+
+        setBlog(prevBlog => ({
+            ...prevBlog,
+            comments: response.data 
+        }));
+
+        setNewComment("");
+    } catch (err) {
+        console.error("Error posting comment:", err.response?.data || err.message);
+        alert("Failed to post comment. Make sure the backend endpoint is running.");
+    }
+};
 
   useEffect(() => {
     const fetchSingleBlog = async () => {
@@ -68,9 +98,9 @@ const BlogDetails = () => {
         {/* Hero Image */}
         {blog.image && (
           <div className="rounded-xl overflow-hidden shadow-lg mb-8 aspect-video max-h-[450px] w-full">
-            <img 
-              src={blog.image} 
-              alt={blog.title} 
+            <img
+              src={blog.image}
+              alt={blog.title}
               className="w-full h-full object-cover"
             />
           </div>
@@ -79,6 +109,37 @@ const BlogDetails = () => {
         {/* Full Blog Content */}
         <div className="prose max-w-none text-gray-800 text-lg leading-relaxed whitespace-pre-line">
           {blog.content || blog.description}
+        </div>
+        {/* 1. Render Existing Comments */}
+        <div className="mt-12 border-t pt-8">
+          <h3 className="text-2xl font-bold mb-6">Comments ({blog.comments?.length || 0})</h3>
+
+          <div className="space-y-4 mb-8">
+            {blog.comments?.map((comment) => (
+              <div key={comment._id} className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-semibold text-gray-800">{comment.username}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="text-gray-700">{comment.text}</p>
+              </div>
+            ))}
+          </div>
+
+          <form onSubmit={handleCommentSubmit} className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="flex-1 p-2 border rounded-lg focus:outline-blue-500"
+            />
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg">
+              Post
+            </button>
+          </form>
         </div>
       </article>
     </div>

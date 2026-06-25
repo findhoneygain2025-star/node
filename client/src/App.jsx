@@ -10,6 +10,7 @@ import { useContext } from 'react'
 import UserDashboard from './pages/Dashboard'
 import CreateBlog from './pages/CreateBlog'
 import BlogDetails from './pages/BlogDetails'
+import UpdateBlog from './pages/UpdateBlog'
 
 const App = () => {
 
@@ -49,6 +50,7 @@ const App = () => {
         <Route path='/register' element={<Register/>}/>
         <Route path='/dashboard' element={user?<UserDashboard/>:<Login/>}/>
         <Route path='/create-blog' element={<CreateBlog/>}/>
+        <Route path='/update-blog/:id' element={<UpdateBlog/>}/>
 
       </Routes>
       
