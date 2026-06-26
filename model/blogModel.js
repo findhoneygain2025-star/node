@@ -37,6 +37,12 @@ let blogSchema = new mongoose.Schema({
     required: true 
   },
   comments:[commentSchema],
+ likes: [
+    { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'User' 
+    }
+  ],
 },{timestamps: true})
 
 

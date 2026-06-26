@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom"; // Added useParams
+import { useNavigate, useParams } from "react-router-dom"; 
 
 const UpdateBlog = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // ✅ Grabs the :id parameter from your route URL
+  const { id } = useParams(); 
 
   const [formData, setFormData] = useState({
     title: "",
@@ -14,14 +14,11 @@ const UpdateBlog = () => {
     author: "",
   });
 
-  // ✅ Fetch current blog details when the page loads
   useEffect(() => {
     const fetchBlogDetails = async () => {
       try {
-        // Using your working details endpoint from earlier
         const response = await axios.get(`http://localhost:3000/blog/details/${id}`);
-        
-        // Populate the form state with existing data from the database
+
         setFormData({
           title: response.data.title || "",
           image: response.data.image || "",
@@ -36,8 +33,6 @@ const UpdateBlog = () => {
 
     if (id) fetchBlogDetails();
   }, [id]);
-
-  // ✅ Uncommented: Keeps the input values in sync with state as you type
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -45,16 +40,15 @@ const UpdateBlog = () => {
     });
   };
 
-  // ✅ Fixed handleSubmit parameters
   async function handleSubmit(e) {
-    e.preventDefault(); // Fixed: Added 'e' parameter to prevent page refresh
+    e.preventDefault(); 
     
-    const token = localStorage.getItem("token"); // Pulling the token from storage if necessary
+    const token = localStorage.getItem("token");
 
     try {
       const response = await axios.put(
         `http://localhost:3000/blog/update/${id}`, 
-        formData, // ✅ Sends the entire updated formData object
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -63,14 +57,13 @@ const UpdateBlog = () => {
       );
 
       console.log("Blog updated successfully", response.data);
-      navigate("/dashboard"); // Redirect back to dashboard after a successful update
+      navigate("/dashboard"); 
     } catch (err) {
       console.error("Error updating blog:", err.response?.data || err.message);
       alert("Failed to update blog.");
     }
   }
 
-  // Styles remain unchanged
   const pageStyle = {
     minHeight: "100vh",
     display: "flex",
@@ -138,7 +131,7 @@ const UpdateBlog = () => {
             name="title"
             placeholder="Enter Blog Title"
             value={formData.title}
-            onChange={handleChange} // ✅ Activated
+            onChange={handleChange} 
             style={inputStyle}
             required
           />
@@ -148,7 +141,7 @@ const UpdateBlog = () => {
             name="image"
             placeholder="Enter Image URL"
             value={formData.image}
-            onChange={handleChange} // ✅ Activated
+            onChange={handleChange}
             style={inputStyle}
             required
           />
@@ -157,7 +150,7 @@ const UpdateBlog = () => {
             name="content"
             placeholder="Enter Blog Content"
             value={formData.content}
-            onChange={handleChange} // ✅ Activated
+            onChange={handleChange} 
             style={textareaStyle}
             required
           ></textarea>
@@ -167,7 +160,7 @@ const UpdateBlog = () => {
             name="author"
             placeholder="Enter Author Name"
             value={formData.author}
-            onChange={handleChange} // ✅ Activated
+            onChange={handleChange} 
             style={inputStyle}
             required
           />

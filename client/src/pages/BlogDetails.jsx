@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from "../components/Navbar";
 import { useContext } from 'react';
 import UserContext from '../UserContext';
+import { CiHeart } from "react-icons/ci";
 
 const BlogDetails = () => {
   const { id } = useParams(); 
@@ -11,6 +12,7 @@ const BlogDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState("");
+  const [likes,setLikes] = useState();
 
 let { user } = useContext(UserContext);
 
@@ -39,13 +41,28 @@ let { user } = useContext(UserContext);
     }
 };
 
+const handleLikes = async ()=>{ 
+  try{
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`http://localhost:3000/blog/${id}/likes`,{},{
+        headers: {
+          Authorization: `Bearer ${token}` 
+        }
+    })
+    setLikes(response.data.totalLikes);
+  }
+  catch(err){
+    console.log(err);
+  }
+}
+
   useEffect(() => {
     const fetchSingleBlog = async () => {
       try {
         setLoading(true);
-        // Make an API call to get a single blog item by its ID
         const response = await axios.get(`http://localhost:3000/blog/details/${id}`);
         setBlog(response.data);
+        console.log(response);
       } catch (err) {
         console.error("Error loading article:", err);
         setError("Could not load the article. Please try again later.");
@@ -109,6 +126,10 @@ let { user } = useContext(UserContext);
         {/* Full Blog Content */}
         <div className="prose max-w-none text-gray-800 text-lg leading-relaxed whitespace-pre-line">
           {blog.content || blog.description}
+        </div>
+        <div className='text-3xl mt-8 flex flex-col justify-center w-10 items-center' >
+        <CiHeart onClick={handleLikes} />
+        <p className='text-sm' >{blog.likes.length}</p>
         </div>
         {/* 1. Render Existing Comments */}
         <div className="mt-12 border-t pt-8">
