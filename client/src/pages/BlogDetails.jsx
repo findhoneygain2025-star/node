@@ -5,56 +5,58 @@ import Navbar from "../components/Navbar";
 import { useContext } from 'react';
 import UserContext from '../UserContext';
 import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa";
 
 const BlogDetails = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState("");
-  const [likes,setLikes] = useState();
+  const [likes, setLikes] = useState(null);
 
-let { user } = useContext(UserContext);
+  let { user } = useContext(UserContext);
 
   const handleCommentSubmit = async (e) => {
-    e.preventDefault(); 
-    
-    if (!newComment.trim()) return; 
+    e.preventDefault();
+
+    if (!newComment.trim()) return;
 
     try {
-        const username = user.name; 
+      const username = user.name;
 
-        const response = await axios.post(`http://localhost:3000/blog/${id}/comment`, {
-            text: newComment,
-            username: username,
-        });
+      const response = await axios.post(`http://localhost:3000/blog/${id}/comment`, {
+        text: newComment,
+        username: username,
+      });
 
-        setBlog(prevBlog => ({
-            ...prevBlog,
-            comments: response.data 
-        }));
+      setBlog(prevBlog => ({
+        ...prevBlog,
+        comments: response.data
+      }));
 
-        setNewComment("");
+      setNewComment("");
     } catch (err) {
-        console.error("Error posting comment:", err.response?.data || err.message);
-        alert("Failed to post comment. Make sure the backend endpoint is running.");
+      console.error("Error posting comment:", err.response?.data || err.message);
+      alert("Failed to post comment. Make sure the backend endpoint is running.");
     }
-};
+  };
 
-const handleLikes = async ()=>{ 
-  try{
-    const token = localStorage.getItem('token');
-    const response = await axios.post(`http://localhost:3000/blog/${id}/likes`,{},{
+
+  const handleLikes = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`http://localhost:3000/blog/${id}/likes`, {}, {
         headers: {
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         }
-    })
-    setLikes(response.data.totalLikes);
+      })
+      setLikes(response.data.totalLikes);
+    }
+    catch (err) {
+      console.log(err);
+    }
   }
-  catch(err){
-    console.log(err);
-  }
-}
 
   useEffect(() => {
     const fetchSingleBlog = async () => {
@@ -128,8 +130,12 @@ const handleLikes = async ()=>{
           {blog.content || blog.description}
         </div>
         <div className='text-3xl mt-8 flex flex-col justify-center w-10 items-center' >
-        <CiHeart onClick={handleLikes} />
-        <p className='text-sm' >{blog.likes.length}</p>
+          {likes> 0 ? (
+            <FaHeart color="red" onClick={handleLikes} style={{ cursor: 'pointer' }} />
+          ) : (
+            <CiHeart color="black" onClick={handleLikes} style={{ cursor: 'pointer' }} />
+          )}
+          <p className='text-sm' >{likes}</p>
         </div>
         {/* 1. Render Existing Comments */}
         <div className="mt-12 border-t pt-8">

@@ -165,19 +165,28 @@ const addLikes = async (req, res) => {
     const decoded = jwt.verify(token,"thisisyourprivatekey");
   const { id } = req.params;
   const  userId  = decoded.id;
-  console.log("User ID from token:", userId);
-  const updatedBlog = await Blogs.findByIdAndUpdate(
-      id,
-      {
-       $addToSet: { likes: userId }
-      },
-      { new: true }
-    );
-    if (!updatedBlog) {
-      return res.status(404).send({ message: "Blog post not found" });
-    }
-    console.log("Updated Blog Likes Array:", updatedBlog.likes);
-    res.status(201).send({ totalLikes: updatedBlog.likes.length });
+  const blog = await Blogs.findById(id);
+
+if (!blog) {
+  return res.status(404).send({ message: "Blog post not found" });
+}
+
+const hasLiked = blog.likes.includes(userId);
+
+const updateOperator = hasLiked 
+  ? { $pull: { likes: userId } }  
+  : { $addToSet: { likes: userId }};
+
+const updatedBlog = await Blogs.findByIdAndUpdate(
+  id,
+  updateOperator,
+  { new: true }
+);
+
+res.status(200).send({ 
+  totalLikes: updatedBlog.likes.length,
+  isLiked: !hasLiked
+});
   }catch(error){
     console.error("Error adding like:", error);
     res.status(500).send({ message: "Failed to add like", error: error.message });
