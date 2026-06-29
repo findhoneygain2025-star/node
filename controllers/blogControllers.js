@@ -155,43 +155,61 @@ const addComment = async (req, res) => {
 
 const addLikes = async (req, res) => {
   const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'No token provided, authorization denied' });
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'No token provided, authorization denied' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, "thisisyourprivatekey");
+    const { id } = req.params;
+    const userId = decoded.id;
+    const blog = await Blogs.findById(id);
+
+    if (!blog) {
+      return res.status(404).send({ message: "Blog post not found" });
     }
-  
-    const token = authHeader.split(' ')[1];
-  try{
-    const decoded = jwt.verify(token,"thisisyourprivatekey");
-  const { id } = req.params;
-  const  userId  = decoded.id;
-  const blog = await Blogs.findById(id);
 
-if (!blog) {
-  return res.status(404).send({ message: "Blog post not found" });
-}
+    const hasLiked = blog.likes.includes(userId);
 
-const hasLiked = blog.likes.includes(userId);
+    const updateOperator = hasLiked
+      ? { $pull: { likes: userId } }
+      : { $addToSet: { likes: userId } };
 
-const updateOperator = hasLiked 
-  ? { $pull: { likes: userId } }  
-  : { $addToSet: { likes: userId }};
+    const updatedBlog = await Blogs.findByIdAndUpdate(
+      id,
+      updateOperator,
+      { new: true }
+    );
 
-const updatedBlog = await Blogs.findByIdAndUpdate(
-  id,
-  updateOperator,
-  { new: true }
-);
-
-res.status(200).send({ 
-  totalLikes: updatedBlog.likes.length,
-  isLiked: !hasLiked
-});
-  }catch(error){
+    res.status(200).send({
+      totalLikes: updatedBlog.likes.length,
+      isLiked: !hasLiked
+    });
+  } catch (error) {
     console.error("Error adding like:", error);
     res.status(500).send({ message: "Failed to add like", error: error.message });
   }
+}
+
+const getLikes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const blog = await Blogs.findById(id);
+
+    if (!blog) {
+      return res.status(404).send({ message: "Blog post not found" });
+    }
+
+    res.status(200).send({
+      totalLikes: blog.likes.length
+    }); 
+  } catch (error) {
+    console.error("Error adding like:", error);
+    res.status(500).send({ message: "Failed to add like", error: error.message });
   }
+}
 
 
-module.exports = { getAllBblogs, getUserBlogs, addBlog, updateBlog, deleteBlog, getDetails, addComment,addLikes }
+module.exports = { getAllBblogs, getUserBlogs, addBlog, updateBlog, deleteBlog, getDetails, addComment, addLikes,getLikes };

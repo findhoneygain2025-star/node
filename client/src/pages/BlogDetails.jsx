@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import UserContext from '../UserContext';
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -13,9 +14,13 @@ const BlogDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newComment, setNewComment] = useState("");
-  const [likes, setLikes] = useState(null);
+  const [likes, setLikes] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
 
   let { user } = useContext(UserContext);
+
+  const token = localStorage.getItem('token');
+  let currentUserId = null;
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -42,16 +47,29 @@ const BlogDetails = () => {
     }
   };
 
+  const getlikes = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/blog/${id}/likes`);
+      setLikes(response.data.totalLikes);
+
+      if (token) {
+        const decoded = jwtDecode(token);
+        currentUserId = decoded.id;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   const handleLikes = async () => {
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.post(`http://localhost:3000/blog/${id}/likes`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
       setLikes(response.data.totalLikes);
+      setIsLiked(!isLiked);
     }
     catch (err) {
       console.log(err);
@@ -59,12 +77,16 @@ const BlogDetails = () => {
   }
 
   useEffect(() => {
+    getlikes();
     const fetchSingleBlog = async () => {
       try {
         setLoading(true);
         const response = await axios.get(`http://localhost:3000/blog/details/${id}`);
+        setLikes(response.data.likes.length);
         setBlog(response.data);
         console.log(response);
+        const userHasLiked = response.data.likes.includes(currentUserId);
+        setIsLiked(userHasLiked);
       } catch (err) {
         console.error("Error loading article:", err);
         setError("Could not load the article. Please try again later.");
@@ -130,7 +152,7 @@ const BlogDetails = () => {
           {blog.content || blog.description}
         </div>
         <div className='text-3xl mt-8 flex flex-col justify-center w-10 items-center' >
-          {likes> 0 ? (
+          {isLiked ? (
             <FaHeart color="red" onClick={handleLikes} style={{ cursor: 'pointer' }} />
           ) : (
             <CiHeart color="black" onClick={handleLikes} style={{ cursor: 'pointer' }} />

@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllBblogs, addBlog, updateBlog, deleteBlog ,getUserBlogs,getDetails,addComment,addLikes } = require('../controllers/blogControllers');
+const { getAllBblogs, addBlog, updateBlog, deleteBlog ,getUserBlogs,getDetails,addComment,addLikes,getLikes } = require('../controllers/blogControllers');
 const checkLogin = require('../middlewares/checkLogin');
 
 const router = express.Router();
@@ -10,6 +10,8 @@ router.get('/',getAllBblogs)
 router.post('/:id/comment', addComment);
 
 router.post('/:id/likes',addLikes);
+
+router.get('/:id/likes',getLikes);
 
 router.get('/details/:id',getDetails);
 
