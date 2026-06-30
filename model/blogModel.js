@@ -43,6 +43,10 @@ let blogSchema = new mongoose.Schema({
       ref: 'User' 
     }
   ],
+  category:{
+    type:String,
+    default : "All Categories"
+  }
 },{timestamps: true})
 
 

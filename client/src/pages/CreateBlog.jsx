@@ -22,18 +22,18 @@ const CreateBlog = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     console.log(formData);
-      axios.post("http://localhost:3000/blog/add",formData,{
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then((res)=>{
-      console.log("this is data")
-      navigate('/dashboard')
+    axios.post("http://localhost:3000/blog/add", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     })
-    .catch((err)=>{
-      console.log(err.response.data)
-    })
+      .then((res) => {
+        console.log("this is data")
+        navigate('/dashboard')
+      })
+      .catch((err) => {
+        console.log(err.response.data)
+      })
   };
 
   const pageStyle = {
@@ -92,57 +92,88 @@ const CreateBlog = () => {
   };
 
   return (
-  <div>
-    <Navbar/>
+    <div>
+      <Navbar />
       <div style={pageStyle}>
-      <form style={formStyle} onSubmit={handleSubmit}>
-        <h2 style={headingStyle}>Create Blog</h2>
+        <form style={formStyle} onSubmit={handleSubmit}>
+          <h2 style={headingStyle}>Create Blog</h2>
 
-        <input
-          type="text"
-          name="title"
-          placeholder="Enter Blog Title"
-          value={formData.title}
-          onChange={handleChange}
-          style={inputStyle}
-          required
-        />
+          <div class="flex flex-col gap-1.5 max-w-xs">
+            <label for="blogs" class="text-xs font-semibold text-slate-700 tracking-wide">
+              Filter by category
+            </label>
 
-        <input
-          type="text"
-          name="image"
-          placeholder="Enter Image URL"
-          value={formData.image}
-          onChange={handleChange}
-          style={inputStyle}
-          required
-        />
+            <div class="relative min-w-[200px] max-w-xs mb-4">
+              <select
+                name="category"
+                id="blogs"
+                value={formData.category || 'All Categories'}
+                onChange={handleChange}
+                className="block w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm font-medium text-slate-700 shadow-xs transition-all hover:border-purple-300 focus:border-purple-500 focus:outline-hidden focus:ring-2 focus:ring-purple-500/20 cursor-pointer"
+              >
+                <option value="All" className="bg-white text-slate-900 py-2">All Categories</option>
+                <option value="Psychology" className="bg-white text-slate-900 py-2">Psychology</option>
+                <option value="Animals" className="bg-white text-slate-900 py-2">Animals</option>
+                <option value="Technology" className="bg-white text-slate-900 py-2">Technology</option>
+                <option value="Lifestyle" className="bg-white text-slate-900 py-2">Lifestyle</option>
+                <option value="Productivity" className="bg-white text-slate-900 py-2">Productivity</option>
+                <option value="Design" className="bg-white text-slate-900 py-2">Design</option>
+                <option value="Business" className="bg-white text-slate-900 py-2">Business</option>
+              </select>
 
-        <textarea
-          name="content"
-          placeholder="Enter Blog Content"
-          value={formData.content}
-          onChange={handleChange}
-          style={textareaStyle}
-          required
-        ></textarea>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+          </div>
 
-        <input
-          type="text"
-          name="author"
-          placeholder="Enter Author Name"
-          value={formData.author}
-          onChange={handleChange}
-          style={inputStyle}
-          required
-        />
+          <input
+            type="text"
+            name="title"
+            placeholder="Enter Blog Title"
+            value={formData.title}
+            onChange={handleChange}
+            style={inputStyle}
+            required
+          />
 
-        <button type="submit" style={buttonStyle}>
-          Create Blog
-        </button>
-      </form>
+          <input
+            type="text"
+            name="image"
+            placeholder="Enter Image URL"
+            value={formData.image}
+            onChange={handleChange}
+            style={inputStyle}
+            required
+          />
+
+          <textarea
+            name="content"
+            placeholder="Enter Blog Content"
+            value={formData.content}
+            onChange={handleChange}
+            style={textareaStyle}
+            required
+          ></textarea>
+
+          <input
+            type="text"
+            name="author"
+            placeholder="Enter Author Name"
+            value={formData.author}
+            onChange={handleChange}
+            style={inputStyle}
+            required
+          />
+
+          <button type="submit" style={buttonStyle}>
+            Create Blog
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
   );
 };
 
