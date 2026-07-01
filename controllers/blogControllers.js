@@ -4,8 +4,12 @@ const jwt = require("jsonwebtoken")
 
 const getAllBblogs = async (req, res) => {
   try {
-    let userBlogs = await Blogs.find({});
-    console.log(userBlogs)
+    const { category } = req.query;
+    let filter = {};
+    if (category && category !== "All Categories") {
+      filter.category = category;
+    }
+    let userBlogs = await Blogs.find(filter).sort({ createdAt: -1 });
     res.send(userBlogs)
   }
   catch (error) {
@@ -25,7 +29,6 @@ const getUserBlogs = async (req, res) => {
     let token = header.split(" ")[1];
     let decoded = jwt.verify(token, "thisisyourprivatekey");
     let userBlogs = await Blogs.find({ createdBy: decoded.id });
-    console.log(userBlogs)
     res.send(userBlogs)
   }
   catch (error) {
@@ -46,14 +49,11 @@ const addBlog = async (req, res) => {
       return res.status(401).json({ message: "Access Denied: Token formatting invalid" });
     }
 
-    console.log(token);
     const decoded = jwt.verify(token, "thisisyourprivatekey");
-    console.log(decoded);
 
     const data = req.body;
     data.createdBy = decoded.id;
     const newblog = await Blogs.create(data);
-    console.log(newblog)
     return res.status(201).send(newblog);
 
   } catch (error) {

@@ -109,7 +109,9 @@ const Login = () => {
         <p className="text-center text-gray-600 mt-6">
           Don't have an account?{" "}
           <span className="text-blue-600 cursor-pointer hover:underline">
+            <a href="http://localhost:5173/register">
             Register
+            </a>
           </span>
         </p>
       </div>

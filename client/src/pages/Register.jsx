@@ -40,7 +40,7 @@ const Register = () => {
    <div>
     <Navbar/>
      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+      <div className="w-full m-4 max-w-md bg-white rounded-xl shadow-lg p-8">
         <h2 className="text-3xl font-bold text-center mb-2">
           Create Account
         </h2>
@@ -132,7 +132,9 @@ const Register = () => {
         <p className="text-center text-gray-600 mt-6">
           Already have an account?{" "}
           <span className="text-blue-600 cursor-pointer hover:underline">
+            <a href="http://localhost:5173/login">
             Login
+            </a>
           </span>
         </p>
       </div>

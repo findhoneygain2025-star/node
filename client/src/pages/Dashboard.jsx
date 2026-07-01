@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import axios from "axios"
 import { useState } from "react";
-
+import Footer from  '../components/Footer'
 
 
 
@@ -181,6 +181,7 @@ const UserDashboard = () => {
           ))}
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

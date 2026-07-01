@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from "../components/Navbar";
 import { useContext } from 'react';
+import Footer from '../components/Footer'
 import UserContext from '../UserContext';
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
@@ -191,6 +192,7 @@ const BlogDetails = () => {
           </form>
         </div>
       </article>
+      <Footer/>
     </div>
   );
 };
