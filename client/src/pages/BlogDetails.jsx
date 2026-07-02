@@ -8,6 +8,7 @@ import UserContext from '../UserContext';
 import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -31,7 +32,7 @@ const BlogDetails = () => {
     try {
       const username = user.name;
 
-      const response = await axios.post(`http://localhost:3000/blog/${id}/comment`, {
+      const response = await axios.post(`${API_BASE}/${id}/comment`, {
         text: newComment,
         username: username,
       });
@@ -50,7 +51,7 @@ const BlogDetails = () => {
 
   const getlikes = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/blog/${id}/likes`);
+      const response = await axios.get(`${API_BASE}/blog/${id}/likes`);
       setLikes(response.data.totalLikes);
 
       if (token) {
@@ -64,7 +65,7 @@ const BlogDetails = () => {
 
   const handleLikes = async () => {
     try {
-      const response = await axios.post(`http://localhost:3000/blog/${id}/likes`, {}, {
+      const response = await axios.post(`${API_BASE}/blog/${id}/likes`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -82,7 +83,7 @@ const BlogDetails = () => {
     const fetchSingleBlog = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:3000/blog/details/${id}`);
+        const response = await axios.get(`${API_BASE}/blog/details/${id}`);
         setLikes(response.data.likes.length);
         setBlog(response.data);
         console.log(response);

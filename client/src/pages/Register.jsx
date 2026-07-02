@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -23,7 +25,7 @@ const Register = () => {
     e.preventDefault();
 
  
-    axios.post("http://localhost:3000/user/register",formData)
+    axios.post(`${API_BASE}/user/register`,formData)
     .then((res)=>{
       console.log(res.data)
         alert("Registration Successful!");

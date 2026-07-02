@@ -11,6 +11,7 @@ import UserDashboard from './pages/Dashboard'
 import CreateBlog from './pages/CreateBlog'
 import BlogDetails from './pages/BlogDetails'
 import UpdateBlog from './pages/UpdateBlog'
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const App = () => {
 
@@ -25,7 +26,7 @@ const App = () => {
       Authorization: "Bearer "+token
     }
 
-    axios.get("http://localhost:3000/user/verify",{headers:header})
+    axios.get(`${API_BASE}/user/verify`,{headers:header})
     .then((res)=>{
        login(res.data)
     })

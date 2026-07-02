@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const CreateBlog = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -22,7 +24,7 @@ const CreateBlog = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     console.log(formData);
-    axios.post("http://localhost:3000/blog/add", formData, {
+    axios.post(`${API_BASE}/blog/add`, formData, {
       headers: {
         Authorization: `Bearer ${token}`
       }

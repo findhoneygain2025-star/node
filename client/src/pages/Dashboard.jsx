@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import axios from "axios"
 import { useState } from "react";
 import Footer from  '../components/Footer'
+const API_BASE = import.meta.env.VITE_API_URL;
 
 
 
@@ -11,7 +12,7 @@ const UserDashboard = () => {
   const [blogs, setBlogs] = useState([]);
   const token = localStorage.getItem("token");
 
-  axios.get("http://localhost:3000/blog/dashboard", {
+  axios.get(`${API_BASE}/blog/dashboard`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -24,7 +25,7 @@ const UserDashboard = () => {
 
   async function handleDelete(id) {
     try {
-      await axios.delete(`http://localhost:3000/blog/delete/${id}`, {
+      await axios.delete(`${API_BASE}/blog/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

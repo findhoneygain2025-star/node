@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../UserContext";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
    
-    axios.post("http://localhost:3000/user/login",formData)
+    axios.post(`${API_BASE}/user/login`,formData)
     .then((res)=>{
       console.log(res.data)
       login(res.data.existingUser)

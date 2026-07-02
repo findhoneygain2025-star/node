@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom"; 
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const UpdateBlog = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const UpdateBlog = () => {
   useEffect(() => {
     const fetchBlogDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/blog/details/${id}`);
+        const response = await axios.get(`${API_BASE}/blog/details/${id}`);
 
         setFormData({
           title: response.data.title || "",
@@ -47,7 +48,7 @@ const UpdateBlog = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/blog/update/${id}`, 
+        `${API_BASE}/blog/update/${id}`, 
         formData,
         {
           headers: {

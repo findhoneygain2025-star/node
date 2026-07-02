@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import axios from 'axios'
 import Footer from '../components/Footer'
 import { Link,useLocation } from "react-router-dom";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const Home = () => {
 
@@ -31,7 +32,7 @@ const Home = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        let response = await axios.get(`http://localhost:3000/blog/?category=${selectedCategory}`);
+        let response = await axios.get(`${API_BASE}/blog/?category=${selectedCategory}`);
         setBlogs(response.data);
       } catch (error) {
         console.error("Error fetching blogs:", error);
