@@ -4,7 +4,10 @@ const blogRouter = require("./routes/blogRouter");
 const mongoose = require('mongoose');
 const cors = require("cors")
 const app = express();
+require('dotenv').config();
 
+const MONGO_URI = process.env.MONGO_URI;
+const PORT = process.env.PORT || 3000;
 app.use(cors())
 // http://localhost:3000
 
@@ -21,10 +24,10 @@ app.get("/", (req, res) => {
 
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/mydbs')
+mongoose.connect(MONGO_URI)
   .then(() => console.log('Connected to MongoDB'));
 
-app.listen(3000, () => console.log("server is listening on port 3000"));
+app.listen(PORT, () => console.log("server is listening on port 3000"));
 
 //12345 => sdf;ljkas;dlkjf;dasljk;lsgd;alkj
 
