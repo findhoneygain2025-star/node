@@ -6,6 +6,7 @@ const cors = require("cors")
 const app = express();
 require('dotenv').config();
 
+
 const allowedOrigins = [
   'https://node-eta-virid.vercel.app',
   'http://localhost:5173', 
@@ -14,21 +15,17 @@ const allowedOrigins = [
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
+  origin: [
+  'https://node-eta-virid.vercel.app',
+  'http://localhost:5173', 
+  'http://localhost:3000'
+],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.options('*', cors());
+// app.options('*', cors());
 
 app.get('/test-connection', (req, res) => {
   res.json({ message: "Backend is fully reachable and CORS is fixed!" });
