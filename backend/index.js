@@ -30,6 +30,10 @@ app.use(cors({
 
 app.options('*', cors());
 
+app.get('/test-connection', (req, res) => {
+  res.json({ message: "Backend is fully reachable and CORS is fixed!" });
+});
+
 app.use(express.json());
 
 app.use("/user", userRouter);
