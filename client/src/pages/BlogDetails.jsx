@@ -47,7 +47,7 @@ const BlogDetails = () => {
     const username = user.name;
 
     // Make the request
-    const response = await axios.post(`${API_BASE}/${id}/comment`, {
+    const response = await axios.post(`${API_BASE}/blog/${id}/comment`, {
       text: newComment.trim(),
       username: username,
     });
