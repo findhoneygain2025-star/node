@@ -11,6 +11,11 @@ import UserDashboard from './pages/Dashboard'
 import CreateBlog from './pages/CreateBlog'
 import BlogDetails from './pages/BlogDetails'
 import UpdateBlog from './pages/UpdateBlog'
+import HelpCenter from './pages/footerLinks/HelpCenter'
+import TermsOfService from './pages/footerLinks/TermsOfService'
+import AboutUs from './pages/footerLinks/AboutUs'
+import PrivacyPolicy from './pages/footerLinks/PrivacyPolicy'
+import CookieSettings from './pages/footerLinks/CookieSettings'
 const API_BASE = import.meta.env.VITE_API_URL;
 
 const App = () => {
@@ -52,9 +57,12 @@ const App = () => {
         <Route path='/dashboard' element={user?<UserDashboard/>:<Login/>}/>
         <Route path='/create-blog' element={<CreateBlog/>}/>
         <Route path='/update-blog/:id' element={<UpdateBlog/>}/>
-
+        <Route path="/help-center" element={<HelpCenter />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/cookie-settings" element={<CookieSettings />} />
+        <Route path="/about" element={<AboutUs />} />
       </Routes>
-      
     </div>
   )
 }

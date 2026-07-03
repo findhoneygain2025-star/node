@@ -33,7 +33,7 @@ let blogSchema = new mongoose.Schema({
     },
     createdBy: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Users',
+    ref: 'User',
     required: true 
   },
   comments:[commentSchema],
