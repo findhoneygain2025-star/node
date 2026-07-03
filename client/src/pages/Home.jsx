@@ -62,10 +62,10 @@ const Home = () => {
       <Navbar />
       {/* Hero Section */}
 
-      <section className="max-w-7xl mx-auto px-6 py-12">
+      <section className="max-w-7xl mx-auto px-6 pt-6 md:pt-8  py-12">
   {/* --- Header Row Wrap Starts Here --- */}
   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-    <h2 className="text-3xl font-bold">Latest Blogs</h2>
+    <h2 className="text-2xl md:text-3xl font-bold">Latest Blogs</h2>
 
     {/* Dropdown Container */}
     <div className="flex flex-col gap-1.5 max-w-xs w-full sm:w-auto">

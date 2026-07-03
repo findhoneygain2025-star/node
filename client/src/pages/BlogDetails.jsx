@@ -150,7 +150,7 @@ const BlogDetails = () => {
         )}
 
         {/* Full Blog Content */}
-        <div className="prose max-w-none text-gray-800 text-lg leading-relaxed whitespace-pre-line">
+        <div className="prose max-w-none text-gray-800 md:text-lg text-md leading-relaxed whitespace-pre-line">
           {blog.content || blog.description}
         </div>
         <div className='text-3xl mt-8 flex flex-col justify-center w-10 items-center' >
@@ -163,7 +163,7 @@ const BlogDetails = () => {
         </div>
         {/* 1. Render Existing Comments */}
         <div className="mt-12 border-t pt-8">
-          <h3 className="text-2xl font-bold mb-6">Comments ({blog.comments?.length || 0})</h3>
+          <h3 className="text-xl md:text-2xl font-bold mb-6">Comments ({blog.comments?.length || 0})</h3>
 
           <div className="space-y-4 mb-8">
             {blog.comments?.map((comment) => (

@@ -42,12 +42,12 @@ const Register = () => {
    <div>
     <Navbar/>
      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full m-4 max-w-md bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold text-center mb-2">
+      <div className="w-full my-4 max-w-md bg-white rounded-xl shadow-lg md:p-8 p-4">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">
           Create Account
         </h2>
 
-        <p className="text-gray-500 text-center mb-8">
+        <p className="text-gray-500 text-sm text-center mb-8">
           Register to start sharing your blogs.
         </p>
 
