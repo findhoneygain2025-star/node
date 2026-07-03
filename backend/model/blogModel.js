@@ -3,8 +3,7 @@ const Users = require('./userModel')
 
 let commentSchema = new mongoose.Schema({
     username:{
-        type:String,
-        required:true
+        type:String
     },
     text:{
         type:String
@@ -48,7 +47,6 @@ let blogSchema = new mongoose.Schema({
     default : "All Categories"
   }
 },{timestamps: true})
-
 
 let Blogs = mongoose.model("blogs",blogSchema); 
 module.exports = Blogs;
