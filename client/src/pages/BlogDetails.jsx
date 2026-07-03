@@ -24,30 +24,51 @@ const BlogDetails = () => {
   const token = localStorage.getItem('token');
   let currentUserId = null;
 
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault();
+ const handleCommentSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!newComment.trim()) return;
+  // 1. Prevent empty strings
+  if (!newComment.trim()) return;
 
-    try {
-      const username = user.name;
+  // 2. Defensive check: Is the user actually logged in?
+  if (!user || !user.name) {
+    alert("You must be logged in to post a comment.");
+    return;
+  }
 
-      const response = await axios.post(`${API_BASE}/${id}/comment`, {
-        text: newComment,
-        username: username,
-      });
+  // 3. Defensive check: Is the blog ID available in this component?
+  if (!id) {
+    console.error("Error: Blog ID is missing from params/state");
+    alert("Invalid blog post ID.");
+    return;
+  }
 
-      setBlog(prevBlog => ({
-        ...prevBlog,
-        comments: response.data
-      }));
+  try {
+    const username = user.name;
 
-      setNewComment("");
-    } catch (err) {
-      console.error("Error posting comment:", err.response?.data || err.message);
-      alert("Failed to post comment. Make sure the backend endpoint is running.");
-    }
-  };
+    // Make the request
+    const response = await axios.post(`${API_BASE}/${id}/comment`, {
+      text: newComment.trim(),
+      username: username,
+    });
+
+    // Update your state with the returned comments array
+    setBlog(prevBlog => ({
+      ...prevBlog,
+      comments: response.data
+    }));
+
+    // Clear input field on success
+    setNewComment("");
+
+  } catch (err) {
+    // THIS WILL TELL YOU THE REAL ERROR IN YOUR BROWSER CONSOLE (F12)
+    console.error("Full Axios Error Object:", err);
+    console.error("Backend Response Error Message:", err.response?.data || err.message);
+    
+    alert(`Failed to post comment. Reason: ${err.response?.data?.message || err.message}`);
+  }
+};
 
   const getlikes = async () => {
     try {
