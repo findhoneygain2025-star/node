@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import axios from "axios"
 import { useState } from "react";
-import Footer from  '../components/Footer'
+import Footer from '../components/Footer'
 const API_BASE = import.meta.env.VITE_API_URL;
 
 
@@ -150,16 +150,18 @@ const UserDashboard = () => {
         <div style={topBar}>
           <h1 style={headingStyle}>User Dashboard</h1>
 
-          <Link to="/create-blog" style={createBtn}>
-            Create Blog
+          <Link to="/create-blog" style={createBtn} className="flex text-center justify-center gap-2 items-center text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-base text-sm px-4 py-2.5 text-center leading-5">Create Blog <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
+          </svg>
           </Link>
         </div>
 
         <div style={blogContainer}>
           {blogs.map((blog) => (
             <div key={blog._id} style={cardStyle}>
-              <img src={blog.image} className="w-full h-52 object-cover" alt={blog.title} style={imageStyle} />
-
+              <Link to={`/blog/${blog._id || blog.id}`}>
+                <img src={blog.image} className="w-full h-52 object-cover" alt={blog.title} style={imageStyle} />
+              </Link>
               <div style={contentStyle}>
                 <h2 style={titleStyle}>{blog.title}</h2>
 
@@ -168,13 +170,18 @@ const UserDashboard = () => {
                   <Link
                     to={`/update-blog/${blog._id}`}
                     style={updateBtn}
-                    className="flex justify-center items-center text-center no-underline"
-                  >
+                    className="flex justify-center items-center gap-2 text-center no-underline text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-base text-sm px-4 py-2.5 text-center leading-5">
                     Update
+                    <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z" />
+                    </svg>
                   </Link>
 
-                  <button style={deleteBtn} onClick={() => handleDelete(blog._id)}>
+                  <button style={deleteBtn} onClick={() => handleDelete(blog._id)} className="flex text-center justify-center gap-2 items-center text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-base text-sm px-4 py-2.5 text-center leading-5">
                     Delete
+                    <svg className="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -182,7 +189,7 @@ const UserDashboard = () => {
           ))}
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
