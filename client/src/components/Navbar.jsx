@@ -56,7 +56,7 @@ const Navbar = () => {
               Login
             </Link>
           )}
-          {!user && !user.name ?(
+          {!user ?(
           <Link to="/register" className="hover:bg-gray-500 rounded-2xl p-2 px-4 hover:text-white transition">
             Register
           </Link>)
