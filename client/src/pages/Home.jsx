@@ -104,6 +104,7 @@ const Home = () => {
   {/* Blog Grid */}
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
     {blogs.map((blog) => (
+      <Link to={`/blog/${blog._id || blog.id}`}>
       <div
         key={blog.id}
         className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
@@ -126,15 +127,9 @@ const Home = () => {
           <p className="text-gray-600 mb-4">
             {blog.description}
           </p>
-
-          <Link
-            to={`/blog/${blog._id || blog.id}`}
-            className="text-blue-600 font-medium hover:text-blue-800 inline-block"
-          >
-            Read More →
-          </Link>
         </div>
       </div>
+    </Link>
     ))}
   </div>
 </section>

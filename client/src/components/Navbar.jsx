@@ -8,7 +8,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-gray-50 text-black shadow-md relative">
+    <nav className="bg-gray-50 text-black shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold">
@@ -56,32 +56,34 @@ const Navbar = () => {
               Login
             </Link>
           )}
-
+          {!user && !user.name ?(
           <Link to="/register" className="hover:bg-gray-500 rounded-2xl p-2 px-4 hover:text-white transition">
             Register
-          </Link>
-        </div>
+          </Link>)
+        :('')
+        }
       </div>
+    </div>
 
-      {/* Mobile Navigation Links Dropdown */}
-      {isOpen && (
-        <div className="md:hidden bg-gray-50 border-t border-gray-200 px-6 py-4 flex flex-col gap-4 absolute left-0 right-0 z-50 shadow-lg">
+    {/* Mobile Navigation Links Dropdown */}
+    {isOpen && (
+      <div className="md:hidden bg-gray-50 border-t border-gray-200 px-6 py-4 flex flex-col gap-4 absolute left-0 right-0 z-50 shadow-lg">
+        <Link 
+          to="/" 
+          onClick={() => setIsOpen(false)}
+          className="hover:bg-gray-500 rounded-2xl p-2 px-4 hover:text-white transition inline-block text-left"
+        >
+          Home
+        </Link>
+        {user && (
           <Link 
-            to="/" 
+            to="/dashboard" 
             onClick={() => setIsOpen(false)}
             className="hover:bg-gray-500 rounded-2xl p-2 px-4 hover:text-white transition inline-block text-left"
           >
-            Home
+            Dashboard
           </Link>
-          {user && (
-            <Link 
-              to="/dashboard" 
-              onClick={() => setIsOpen(false)}
-              className="hover:bg-gray-500 rounded-2xl p-2 px-4 hover:text-white transition inline-block text-left"
-            >
-              Dashboard
-            </Link>
-          )}
+        )}
 
           {user && user.name ? (
             <button 

@@ -158,7 +158,7 @@ const UserDashboard = () => {
         <div style={blogContainer}>
           {blogs.map((blog) => (
             <div key={blog._id} style={cardStyle}>
-              <img src={blog.image} alt={blog.title} style={imageStyle} />
+              <img src={blog.image} className="w-full h-52 object-cover" alt={blog.title} style={imageStyle} />
 
               <div style={contentStyle}>
                 <h2 style={titleStyle}>{blog.title}</h2>

@@ -28,7 +28,7 @@ const getUserBlogs = async (req, res) => {
     let header = req.headers.authorization;
     let token = header.split(" ")[1];
     let decoded = jwt.verify(token, "thisisyourprivatekey");
-    let userBlogs = await Blogs.find({ createdBy: decoded.id });
+    let userBlogs = await Blogs.find({ createdBy: decoded.id }).sort({ createdAt: -1 });
     res.send(userBlogs)
   }
   catch (error) {
