@@ -50,9 +50,12 @@ const addBlog = async (req, res) => {
     }
 
     const decoded = jwt.verify(token, "thisisyourprivatekey");
-
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({ message: "No image file uploaded or processing failed" });
+    }
     const data = req.body;
     data.createdBy = decoded.id;
+    data.image = req.file.path;
     const newblog = await Blogs.create(data);
     return res.status(201).send(newblog);
 
