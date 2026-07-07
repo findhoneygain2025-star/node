@@ -1,6 +1,6 @@
 const Blogs = require("../model/blogModel")
 const jwt = require("jsonwebtoken")
-
+const { cloudinary } = require('../config/cloudinaryConfig');
 
 const getAllBblogs = async (req, res) => {
   try {
@@ -56,6 +56,7 @@ const addBlog = async (req, res) => {
     const data = req.body;
     data.createdBy = decoded.id;
     data.image = req.file.path;
+    data.imagePublicId = req.file.filename;
     const newblog = await Blogs.create(data);
     return res.status(201).send(newblog);
 
@@ -69,6 +70,7 @@ const addBlog = async (req, res) => {
 
 const updateBlog = async (req, res) => {
   try {
+
     let header = req.headers.authorization;
 
     if (!header) {
@@ -84,7 +86,23 @@ const updateBlog = async (req, res) => {
     let decoded = jwt.verify(token, "thisisyourprivatekey")
 
     let { id } = req.params;
-    let data = req.body;
+    let currentBlog = await Blogs.findById(id);
+    if (!currentBlog) {
+      return res.status(404).send("Blog not found");
+    }
+
+    let data = {...req.body};
+    if (req.file && req.file.path) {
+  
+      if (currentBlog.imagePublicId) {
+        await cloudinary.uploader.destroy(currentBlog.imagePublicId, { invalidate: true });
+      }
+      data.image = req.file.path;
+      data.imagePublicId = req.file.filename;
+    }else{
+      data.image=currentBlog.image;
+      data.imagePublicId=currentBlog.imagePublicId;
+    }
 
     let updatedblog = await Blogs.findByIdAndUpdate(id, data, { new: true });
     res.send(updatedblog)
@@ -111,12 +129,16 @@ const deleteBlog = async (req, res) => {
     let decoded = jwt.verify(token, "thisisyourprivatekey")
     let { id } = req.params;
 
-    let deletedblog = await Blogs.findByIdAndDelete(id);
+    let blogToDelete = await Blogs.findById(id);
 
-    if (!deletedblog) {
+
+    if (!blogToDelete) {
       res.status(400).send("no blog found to delete")
     }
-
+    if (blogToDelete.imagePublicId) {
+      await cloudinary.uploader.destroy(blogToDelete.imagePublicId, { invalidate: true });
+    }
+    await Blogs.findByIdAndDelete(id);
     res.send("blog deleted")
   }
   catch (error) {

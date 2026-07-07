@@ -28,12 +28,12 @@ const CreateBlog = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     console.log(formData);
-const dataToSend = new FormData();
+  const dataToSend = new FormData();
   dataToSend.append("title", formData.title);
   dataToSend.append("content", formData.content);
   dataToSend.append("author", formData.author);
   
-  dataToSend.append("image", file);
+  dataToSend.append("image", file); 
 
 
     axios.post(`${API_BASE}/blog/add`, dataToSend, {
@@ -153,8 +153,6 @@ const dataToSend = new FormData();
             style={inputStyle}
             required
           />
-
-          {/* <input type="text" name="image" style={inputStyle} onChange={handleChange} value={formData.image} placeholder="Enter image url" /> */}
 
            <input type="file"
             name="image"

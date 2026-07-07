@@ -1,7 +1,7 @@
 const express = require('express');
 const { getAllBblogs, addBlog, updateBlog, deleteBlog ,getUserBlogs,getDetails,addComment,addLikes,getLikes } = require('../controllers/blogControllers');
 const checkLogin = require('../middlewares/checkLogin');
-const upload = require('../config/cloudinaryConfig');
+const {upload} = require('../config/cloudinaryConfig');
 
 const router = express.Router();
 
@@ -22,8 +22,7 @@ router.post("/add",
     upload.single('image'),
     addBlog)
 
-router.put("/update/:id",updateBlog)
-
+router.put("/update/:id",upload.single('image'),updateBlog)
 router.delete("/delete/:id",deleteBlog)
 
 
