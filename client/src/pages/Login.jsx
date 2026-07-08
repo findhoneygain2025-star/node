@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import UserContext from "../UserContext";
 const API_BASE = import.meta.env.VITE_API_URL;
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -28,16 +29,17 @@ const Login = () => {
    
     axios.post(`${API_BASE}/user/login`,formData)
     .then((res)=>{
-      console.log(res.data)
-      login(res.data.existingUser)
-      localStorage.setItem("token",res.data.token)
-      alert("login successfull")
+      let {user,message,token} = res.data;
+      console.log(user);
+      login(user)
+      localStorage.setItem("token",token)
+      toast.success(message);
       navigate('/')
     })
     .catch((err)=>{
-      console.log(err.response.data)
+      const errorMessage = err.response?.data?.message || "Login failed. Please try again.";
+      toast.error(errorMessage);
     })
-   
   };
 
   return (

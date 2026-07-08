@@ -13,26 +13,54 @@ const getAllBblogs = async (req, res) => {
     res.send(userBlogs)
   }
   catch (error) {
-    res.status(401).send("Unauthorized access");
+     return res.status(500).json({
+      success: false,
+      message: "Server error during fetching data",
+      error: error.message
+    });
   }
 }
 
 const getDetails = async (req, res) => {
+  try{
   let { id } = req.params;
   let Details = await Blogs.findById(id);
+   if(!Details){
+    res.status(404).json({
+      success:false,
+      message:"Couldn't find Blog"
+    })
+  }
   res.send(Details);
+}catch(error){
+   return res.status(500).json({
+      success: false,
+      message: "Server error during fetching data",
+      error: error.message
+    });
+}
 }
 
 const getUserBlogs = async (req, res) => {
   try {
     let header = req.headers.authorization;
     let token = header.split(" ")[1];
+    if(!token){
+      res.status(400).json({
+        success:false,
+        message:"Unauthorized access"
+      })
+    }
     let decoded = jwt.verify(token, "thisisyourprivatekey");
     let userBlogs = await Blogs.find({ createdBy: decoded.id }).sort({ createdAt: -1 });
     res.send(userBlogs)
   }
   catch (error) {
-    res.send('unauthorized access')
+     return res.status(500).json({
+      success: false,
+      message: "Server Cannot get your blogs",
+      error: error.message
+    });
   }
 }
 
@@ -58,8 +86,10 @@ const addBlog = async (req, res) => {
     data.image = req.file.path;
     data.imagePublicId = req.file.filename;
     const newblog = await Blogs.create(data);
-    return res.status(201).send(newblog);
-
+    return res.status(201).json({
+      success:true,
+      message:"Blog created successfully",
+    });
   } catch (error) {
     return res.status(401).json({
       message: "Invalid or expired token",
@@ -105,10 +135,16 @@ const updateBlog = async (req, res) => {
     }
 
     let updatedblog = await Blogs.findByIdAndUpdate(id, data, { new: true });
-    res.send(updatedblog)
+    return res.status(201).json({
+      success:true,
+      message:"Blog updated successfully",
+    });
   }
   catch (err) {
-    res.send(err);
+     return res.status(401).json({
+      message: "Invalid or expired token",
+      error: error.message
+    });
   }
 }
 
@@ -133,16 +169,25 @@ const deleteBlog = async (req, res) => {
 
 
     if (!blogToDelete) {
-      res.status(400).send("no blog found to delete")
+      res.status(400).json({
+        success:false,
+        message:"No blog found to delete"
+      })
     }
     if (blogToDelete.imagePublicId) {
       await cloudinary.uploader.destroy(blogToDelete.imagePublicId, { invalidate: true });
     }
     await Blogs.findByIdAndDelete(id);
-    res.send("blog deleted")
+    return res.status(201).json({
+      success:true,
+      message:"Blog deleted successfully"
+    })
   }
   catch (error) {
-    res.send(error);
+    return res.status(401).json({
+      message: "Invalid or expired token",
+      error: error.message
+    });
   }
 }
 
@@ -173,8 +218,10 @@ const addComment = async (req, res) => {
 
     res.status(201).send(updatedBlog.comments);
   } catch (error) {
-    console.error("Error adding comment:", error);
-    res.status(500).send({ message: "Failed to post comment", error: error.message });
+   return res.status(401).json({
+      message: "Comment rejected by server",
+      error: error.message
+    });
   }
 };
 

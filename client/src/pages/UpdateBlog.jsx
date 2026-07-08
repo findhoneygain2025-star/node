@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom"; 
+import { useNavigate, useParams } from "react-router-dom";
 const API_BASE = import.meta.env.VITE_API_URL;
+import { toast } from "react-toastify";
 
 const UpdateBlog = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); 
+  const { id } = useParams();
   let image;
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     author: "",
   });
-   const [file, setFile] = useState(null);
-  
-    const handleFileChange = (e) => {
-      setFile(e.target.files[0]);
-    };
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   useEffect(() => {
     const fetchBlogDetails = async () => {
@@ -27,7 +28,7 @@ const UpdateBlog = () => {
         setFormData({
           title: response.data.title || "",
           content: response.data.content || "",
-          category:response.data.category || "",
+          category: response.data.category || "",
           author: response.data.author || "",
           image: response.data.image || ""
         });
@@ -46,36 +47,35 @@ const UpdateBlog = () => {
     });
   };
 
-  async function handleSubmit(e) {
-    e.preventDefault(); 
-    
+  function handleSubmit(e) {
+    e.preventDefault();
+
     const token = localStorage.getItem("token");
     const dataToSend = new FormData();
     dataToSend.append("title", formData.title);
     dataToSend.append("content", formData.content);
     dataToSend.append("author", formData.author);
-    dataToSend.append("category",formData.category);
-  
+    dataToSend.append("category", formData.category);
+
     dataToSend.append("image", file);
 
-    try {
-      const response = await axios.put(
-        `${API_BASE}/blog/update/${id}`, 
-        dataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
+    axios.put(
+      `${API_BASE}/blog/update/${id}`,
+      dataToSend,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
         }
-      );
-
-      console.log("Blog updated successfully", response.data);
-      navigate("/dashboard"); 
-    } catch (err) {
-      console.error("Error updating blog:", err.response?.data || err.message);
-      alert("Failed to update blog.");
-    }
+      }
+    ).then((res) => {
+      let { message } = res.data;
+      toast.success(message);
+      navigate("/dashboard");
+    }).catch((err) => {
+      let errorMessage = err.response?.data?.message || err.message || "Failed to update blog";
+      toast.error(errorMessage);
+    })
   }
 
   const pageStyle = {
@@ -176,7 +176,7 @@ const UpdateBlog = () => {
             name="title"
             placeholder="Enter Blog Title"
             value={formData.title}
-            onChange={handleChange} 
+            onChange={handleChange}
             style={inputStyle}
             required
           />
@@ -187,14 +187,14 @@ const UpdateBlog = () => {
             style={inputStyle}
           ></input>
           <div className="h-full w-full" >
-          <p><b>Original Image : </b></p>
-          <img src={formData.image} alt={formData.title} className="rounded-md m-4 ml-0" />
+            <p><b>Original Image : </b></p>
+            <img src={formData.image} alt={formData.title} className="rounded-md m-4 ml-0" />
           </div>
           <textarea
             name="content"
             placeholder="Enter Blog Content"
             value={formData.content}
-            onChange={handleChange} 
+            onChange={handleChange}
             style={textareaStyle}
             required
           ></textarea>
@@ -204,7 +204,7 @@ const UpdateBlog = () => {
             name="author"
             placeholder="Enter Author Name"
             value={formData.author}
-            onChange={handleChange} 
+            onChange={handleChange}
             style={inputStyle}
             required
           />

@@ -18,11 +18,10 @@ router.get('/details/:id',getDetails);
 
 router.get('/dashboard',getUserBlogs)
 
-router.post("/add",
-    upload.single('image'),
-    addBlog)
+router.post("/add",upload.single('image'),addBlog)
 
 router.put("/update/:id",upload.single('image'),updateBlog)
+
 router.delete("/delete/:id",deleteBlog)
 
 

@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 const API_BASE = import.meta.env.VITE_API_URL;
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -23,19 +24,16 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
- 
     axios.post(`${API_BASE}/user/register`,formData)
     .then((res)=>{
-      console.log(res.data)
-        alert("Registration Successful!");
+        let {message,user} = res.data;
+        toast.success(message);
         navigate('/login')
     })
     .catch((err)=>{
-      console.log(err.response.data)
+      const errorMessage = err.response?.data?.message || "Registration failed. Please try again.";
+      toast.error(errorMessage);
     })
-   
-  
   };
 
   return (

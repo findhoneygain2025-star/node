@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const API_BASE = import.meta.env.VITE_API_URL;
 
 const CreateBlog = () => {
@@ -43,11 +44,13 @@ const CreateBlog = () => {
       }
     })
       .then((res) => {
-        console.log("this is data")
+        let {message} = res.data;
+        toast.success(message);
         navigate('/dashboard')
       })
       .catch((err) => {
-        console.log(err.response.data)
+        let errorMessage = err.response?.data?.message || err.message || "Failed to create blog";
+        toast.error(errorMessage);
       })
   };
 
