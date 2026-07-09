@@ -2,6 +2,7 @@ const express = require("express");
 const userRouter = require("./routes/userRouter");
 const blogRouter = require("./routes/blogRouter");
 const mongoose = require('mongoose');
+const donationRoute = require("./routes/donationRoute.js");
 const cors = require("cors")
 const app = express();
 require('dotenv').config();
@@ -25,13 +26,14 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// app.options('*', cors());
 
 app.get('/test-connection', (req, res) => {
   res.json({ message: "Backend is fully reachable and CORS is fixed!" });
 });
 
 app.use(express.json());
+
+app.use("/api/donation", donationRoute);
 
 app.use("/user", userRouter);
 

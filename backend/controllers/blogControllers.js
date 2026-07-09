@@ -4,10 +4,19 @@ const { cloudinary } = require('../config/cloudinaryConfig');
 
 const getAllBblogs = async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category ,search} = req.query;
     let filter = {};
     if (category && category !== "All Categories") {
       filter.category = category;
+    }
+    if (search && search.trim() !== "") {
+      const safeSearch = search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      const searchRegex = new RegExp(safeSearch, "i"); 
+
+      filter.$or = [
+        { title: { $regex: searchRegex } },
+        { description: { $regex: searchRegex } } 
+      ];
     }
     let userBlogs = await Blogs.find(filter).sort({ createdAt: -1 });
     res.send(userBlogs)
