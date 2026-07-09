@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom"; 
+import { useNavigate, useParams } from "react-router-dom";
 const API_BASE = import.meta.env.VITE_API_URL;
+import { toast } from "react-toastify";
 
 const UpdateBlog = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); 
-
+  const { id } = useParams();
+  let image;
   const [formData, setFormData] = useState({
     title: "",
-    image: "",
     content: "",
     author: "",
   });
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   useEffect(() => {
     const fetchBlogDetails = async () => {
@@ -22,9 +27,10 @@ const UpdateBlog = () => {
 
         setFormData({
           title: response.data.title || "",
-          image: response.data.image || "",
           content: response.data.content || "",
+          category: response.data.category || "",
           author: response.data.author || "",
+          image: response.data.image || ""
         });
       } catch (err) {
         console.error("Error fetching blog details:", err.response?.data || err.message);
@@ -41,28 +47,35 @@ const UpdateBlog = () => {
     });
   };
 
-  async function handleSubmit(e) {
-    e.preventDefault(); 
-    
+  function handleSubmit(e) {
+    e.preventDefault();
+
     const token = localStorage.getItem("token");
+    const dataToSend = new FormData();
+    dataToSend.append("title", formData.title);
+    dataToSend.append("content", formData.content);
+    dataToSend.append("author", formData.author);
+    dataToSend.append("category", formData.category);
 
-    try {
-      const response = await axios.put(
-        `${API_BASE}/blog/update/${id}`, 
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+    dataToSend.append("image", file);
+
+    axios.put(
+      `${API_BASE}/blog/update/${id}`,
+      dataToSend,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
         }
-      );
-
-      console.log("Blog updated successfully", response.data);
-      navigate("/dashboard"); 
-    } catch (err) {
-      console.error("Error updating blog:", err.response?.data || err.message);
-      alert("Failed to update blog.");
-    }
+      }
+    ).then((res) => {
+      let { message } = res.data;
+      toast.success(message);
+      navigate("/dashboard");
+    }).catch((err) => {
+      let errorMessage = err.response?.data?.message || err.message || "Failed to update blog";
+      toast.error(errorMessage);
+    })
   }
 
   const pageStyle = {
@@ -127,31 +140,61 @@ const UpdateBlog = () => {
         <form style={formStyle} onSubmit={handleSubmit}>
           <h2 style={headingStyle}>Update Blog</h2>
 
+          <div class="flex flex-col gap-1.5 max-w-xs">
+            <label htmlFor="blogs" className="text-xs font-semibold text-slate-700 tracking-wide">
+              Filter by category
+            </label>
+
+            <div class="relative min-w-[200px] max-w-xs mb-4">
+              <select
+                name="category"
+                id="blogs"
+                value={formData.category || 'All Categories'}
+                onChange={handleChange}
+                className="block w-full appearance-none rounded-lg border border-gray-200 bg-white px-4 py-2.5 pr-10 text-sm font-medium text-slate-700 shadow-xs transition-all hover:border-purple-300 focus:border-purple-500 focus:outline-hidden focus:ring-2 focus:ring-purple-500/20 cursor-pointer"
+              >
+                <option value="All" className="bg-white text-slate-900 py-2">All Categories</option>
+                <option value="Psychology" className="bg-white text-slate-900 py-2">Psychology</option>
+                <option value="Animals" className="bg-white text-slate-900 py-2">Animals</option>
+                <option value="Technology" className="bg-white text-slate-900 py-2">Technology</option>
+                <option value="Lifestyle" className="bg-white text-slate-900 py-2">Lifestyle</option>
+                <option value="Productivity" className="bg-white text-slate-900 py-2">Productivity</option>
+                <option value="Design" className="bg-white text-slate-900 py-2">Design</option>
+                <option value="Business" className="bg-white text-slate-900 py-2">Business</option>
+              </select>
+
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-slate-500">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
           <input
             type="text"
             name="title"
             placeholder="Enter Blog Title"
             value={formData.title}
-            onChange={handleChange} 
-            style={inputStyle}
-            required
-          />
-
-          <input
-            type="text"
-            name="image"
-            placeholder="Enter Image URL"
-            value={formData.image}
             onChange={handleChange}
             style={inputStyle}
             required
           />
 
+          <input type="file"
+            name="image"
+            onChange={handleFileChange}
+            style={inputStyle}
+          ></input>
+          <div className="h-full w-full" >
+            <p><b>Original Image : </b></p>
+            <img src={formData.image} alt={formData.title} className="rounded-md m-4 ml-0" />
+          </div>
           <textarea
             name="content"
             placeholder="Enter Blog Content"
             value={formData.content}
-            onChange={handleChange} 
+            onChange={handleChange}
             style={textareaStyle}
             required
           ></textarea>
@@ -161,7 +204,7 @@ const UpdateBlog = () => {
             name="author"
             placeholder="Enter Author Name"
             value={formData.author}
-            onChange={handleChange} 
+            onChange={handleChange}
             style={inputStyle}
             required
           />

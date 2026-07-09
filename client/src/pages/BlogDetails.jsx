@@ -9,6 +9,7 @@ import { CiHeart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
 const API_BASE = import.meta.env.VITE_API_URL;
+import { toast } from 'react-toastify';
 
 const BlogDetails = () => {
   const { id } = useParams();
@@ -46,27 +47,22 @@ const BlogDetails = () => {
   try {
     const username = user.name;
 
-    // Make the request
     const response = await axios.post(`${API_BASE}/blog/${id}/comment`, {
       text: newComment.trim(),
       username: username,
     });
-
-    // Update your state with the returned comments array
+     
     setBlog(prevBlog => ({
       ...prevBlog,
       comments: response.data
     }));
 
-    // Clear input field on success
     setNewComment("");
-
+    toast.success("Comment added successfully")
   } catch (err) {
-    // THIS WILL TELL YOU THE REAL ERROR IN YOUR BROWSER CONSOLE (F12)
-    console.error("Full Axios Error Object:", err);
-    console.error("Backend Response Error Message:", err.response?.data || err.message);
-    
-    alert(`Failed to post comment. Reason: ${err.response?.data?.message || err.message}`);
+    let errorMessage = err.response?.data?.message || err.message || "Failed to send comment to server";
+    toast.error(errorMessage);
+    console.log(errorMessage);
   }
 };
 
@@ -107,12 +103,12 @@ const BlogDetails = () => {
         const response = await axios.get(`${API_BASE}/blog/details/${id}`);
         setLikes(response.data.likes.length);
         setBlog(response.data);
-        console.log(response);
         const userHasLiked = response.data.likes.includes(currentUserId);
         setIsLiked(userHasLiked);
       } catch (err) {
-        console.error("Error loading article:", err);
         setError("Could not load the article. Please try again later.");
+        const errorMessage = err.response?.data?.message || err.message || "Failed to load blog" ;
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }

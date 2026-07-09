@@ -11,11 +11,8 @@ let getAllUsers = async (req,res)=>{
     res.send(data);
 }
 
-
 let verifyToken = async(req,res)=>{
        try {
-
-         
             let header = req.headers.authorization;
         
             if(!header){
@@ -31,75 +28,98 @@ let verifyToken = async(req,res)=>{
           let {id} =   jwt.verify(token,"thisisyourprivatekey");
           let user = await Users.findById(id);
 
-          res.send(user);
-
-           
+          res.send(user); 
         
     } catch (error) {
         res.status(401).send(error)
     }
 }
 
-
-
-
-
-
-
 let registerUser = async (req,res)=>{
-
-
+try{
 let result = validationResult(req);
 
 let errors = result.errors;
 
 if(errors.length){
     let err = errors.map((ele)=>ele.msg)
-    return res.send(err[0])
+    return res.status(400).json({
+        success: false,
+        message: errMessages[0] 
+      });
 }
-
-
     let data = req.body;
 
     let existingUser = await Users.findOne({email:data.email})
 
-    if(existingUser){
-        return res.status(400).send("you are already registered")
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "An account with this email already exists."
+      });
     }
 
     let hashPassword = bcrypt.hashSync(data.password,10);
  
     let newUser = await Users.create({...data,password:hashPassword});
+    // Remove password from response for security
+    const userResponse = newUser.toObject();
+    delete userResponse.password;
 
-    res.send(newUser);
-      
-   
+    return res.status(201).json({
+      success: true,
+      message: "Registration successful!",
+      user: userResponse
+    });
+}
+catch(error){
+    return res.status(500).json({
+      success: false,
+      message: "Server error during registration",
+      error: error.message
+    });
+}
 }
 
 const loginUser = async(req,res)=>{
-
+    try{
     let data = req.body;
 
     let existingUser = await Users.findOne({email:data.email});
   
     if(!existingUser){
-        return res.status(400).send("no user found please register first")
+        return res.status(400).json({
+          success:false,
+          message:"no user found please register first"
+        })
     }
 
-  let result = bcrypt.compareSync(data.password,existingUser.password)
+  let isPasswordValid = bcrypt.compareSync(data.password,existingUser.password)
 
-  if(!result){
-    return res.status(400).send("wrong password")
+  if(!isPasswordValid){
+    return res.status(401).json({
+        success: false,
+        message: "Incorrect password. Please try again."
+      });
   }
 
   let token = jwt.sign({id:existingUser._id},"thisisyourprivatekey")
 
-    res.send({existingUser,token})
-  
+    // res.send({existingUser,token})
+    res.status(201).json({
+      success:true,
+      message:"Login successfully",
+      user:existingUser,
+      token:token
+    });
+}catch(error){
+  return res.status(500).json({
+      success: false,
+      message: "Server error during login",
+      error: error.message
+    });
 }
-
-
-
+}
 
 let updateUser = async(req,res)=>{
 

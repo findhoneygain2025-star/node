@@ -26,6 +26,9 @@ let blogSchema = new mongoose.Schema({
    image:{
         type:String,
     },
+    imagePublicId: { 
+        type: String 
+    },
     author:{
         type:String,
         required:true

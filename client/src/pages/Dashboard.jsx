@@ -5,7 +5,7 @@ import axios from "axios"
 import { useState } from "react";
 import Footer from '../components/Footer'
 const API_BASE = import.meta.env.VITE_API_URL;
-
+import { toast } from "react-toastify";
 
 
 const UserDashboard = () => {
@@ -17,25 +17,29 @@ const UserDashboard = () => {
       Authorization: `Bearer ${token}`
     }
   }).then((res) => {
+    let {message} = res.data;
+    toast.success(message);
     setBlogs(res.data);
   })
     .catch((err) => {
-      console.log(err.response.data)
+      let errorMessage = err.response?.data?.message || err.message || "Failed to get blogs from server";
+      toast.error(errorMessage);
     })
 
-  async function handleDelete(id) {
-    try {
-      await axios.delete(`${API_BASE}/blog/delete/${id}`, {
+ function handleDelete(id) {
+    axios.delete(`${API_BASE}/blog/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      });
+      }).then((res)=>{
       setBlogs(prevBlogs => prevBlogs.filter(blog => blog._id !== id));
-
+      let {message} = res.data;
+      toast.success(message);
       console.log("Blog deleted successfully");
-    } catch (err) {
-      console.error("Error deleting blog:", err.response?.data || err.message);
-    }
+    }).catch ((err)=> {
+      let errorMessage = err.response?.data?.message || err.message || "Failed to delete blog";
+      toast.error(errorMessage);
+    })
   }
 
 

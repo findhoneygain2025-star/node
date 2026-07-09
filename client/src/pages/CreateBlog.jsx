@@ -2,19 +2,24 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 const API_BASE = import.meta.env.VITE_API_URL;
 
 const CreateBlog = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
-    image: "",
     content: "",
     author: "",
   });
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   const handleChange = (e) => {
-    setFormData({
+    setFormData({ 
       ...formData,
       [e.target.name]: e.target.value,
     });
@@ -24,17 +29,28 @@ const CreateBlog = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     console.log(formData);
-    axios.post(`${API_BASE}/blog/add`, formData, {
+  const dataToSend = new FormData();
+  dataToSend.append("title", formData.title);
+  dataToSend.append("content", formData.content);
+  dataToSend.append("author", formData.author);
+  
+  dataToSend.append("image", file); 
+
+
+    axios.post(`${API_BASE}/blog/add`, dataToSend, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data"
       }
     })
       .then((res) => {
-        console.log("this is data")
+        let {message} = res.data;
+        toast.success(message);
         navigate('/dashboard')
       })
       .catch((err) => {
-        console.log(err.response.data)
+        let errorMessage = err.response?.data?.message || err.message || "Failed to create blog";
+        toast.error(errorMessage);
       })
   };
 
@@ -101,7 +117,7 @@ const CreateBlog = () => {
           <h2 style={headingStyle}>Create Blog</h2>
 
           <div class="flex flex-col gap-1.5 max-w-xs">
-            <label for="blogs" class="text-xs font-semibold text-slate-700 tracking-wide">
+            <label htmlFor="blogs" className="text-xs font-semibold text-slate-700 tracking-wide">
               Filter by category
             </label>
 
@@ -141,15 +157,13 @@ const CreateBlog = () => {
             required
           />
 
-          <input
-            type="text"
+           <input type="file"
             name="image"
-            placeholder="Enter Image URL"
             value={formData.image}
-            onChange={handleChange}
+            onChange={handleFileChange}
             style={inputStyle}
             required
-          />
+          ></input>
 
           <textarea
             name="content"
