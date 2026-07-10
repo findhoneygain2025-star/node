@@ -96,9 +96,6 @@ const UserDashboard = () => {
             <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
               Creator Dashboard
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage your published articles, monitor content integrity, or write new entries.
-            </p>
           </div>
 
           <Link 

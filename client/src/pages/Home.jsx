@@ -106,9 +106,6 @@ const Home = () => {
             <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight sm:text-4xl">
               Latest Stories
             </h2>
-            <p className="mt-2 text-sm text-gray-500">
-              Explore insightful perspectives across product, code, and design.
-            </p>
           </div>
 
           <div className="flex flex-col gap-2 max-w-xs w-full sm:w-auto">
