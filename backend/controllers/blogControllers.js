@@ -200,6 +200,67 @@ const deleteBlog = async (req, res) => {
   }
 }
 
+// DELETE A COMMENT
+const deleteComment = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+
+    // Optional Security: If your auth middleware sets req.user, 
+    // you can fetch the blog first and ensure comment.username === req.user.name here.
+
+    const updatedBlog = await Blogs.findByIdAndUpdate(
+      id,
+      {
+        $pull: { comments: { _id: commentId } } // Pulls the matching subdocument out of the array
+      },
+      { new: true }
+    );
+
+    if (!updatedBlog) {
+      return res.status(404).send({ message: "Blog post not found" });
+    }
+
+    res.status(200).send(updatedBlog.comments);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to delete comment",
+      error: error.message
+    });
+  }
+};
+
+// UPDATE/EDIT A COMMENT
+const updateComment = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).send({ message: "Comment text cannot be empty" });
+    }
+
+    // Finds the blog, looks inside the comments array for the exact _id, and updates its text
+    const updatedBlog = await Blogs.findOneAndUpdate(
+      { _id: id, "comments._id": commentId },
+      {
+        $set: { "comments.$.text": text } // The "$" represents the matched comment index
+      },
+      { new: true }
+    );
+
+    if (!updatedBlog) {
+      return res.status(404).send({ message: "Blog or comment target structural reference not found" });
+    }
+
+    res.status(200).send(updatedBlog.comments);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to update comment",
+      error: error.message
+    });
+  }
+};
+
 const addComment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -293,4 +354,4 @@ const getLikes = async (req, res) => {
 }
 
 
-module.exports = { getAllBblogs, getUserBlogs, addBlog, updateBlog, deleteBlog, getDetails, addComment, addLikes,getLikes };
+module.exports = { getAllBblogs, getUserBlogs, addBlog, updateBlog, deleteBlog, getDetails, addComment, addLikes,getLikes,deleteComment,updateComment };
