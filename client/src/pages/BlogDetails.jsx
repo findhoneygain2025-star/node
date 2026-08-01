@@ -178,7 +178,7 @@ const BlogDetails = () => {
     <div className="min-h-screen bg-white flex flex-col font-sans selection:bg-purple-100 text-gray-800">
       <Navbar />
       
-      <div className="sticky top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100/50">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100/50">
         <motion.div className="h-1 bg-purple-600 origin-left" style={{ scaleX }} />
       </div>
 
