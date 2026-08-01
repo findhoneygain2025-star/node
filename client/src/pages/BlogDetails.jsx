@@ -179,7 +179,7 @@ const BlogDetails = () => {
       <Navbar />
       
       <div className="fixed top-0 left-0 right-0 z-[100] bg-white/80 backdrop-blur-md border-b border-gray-100/50">
-        <motion.div className="h-1 bg-purple-600 origin-left" style={{ scaleX }} initial={{ scaleX: 0 }} />
+        <motion.div className="h-1 bg-purple-600 origin-left" style={{ scaleX,transformOrigin: "left" }} initial={{ scaleX: 0 }} />
       </div>
 
       <main className="max-w-3xl mx-auto px-6 pt-8 pb-24 flex-1 w-full">
