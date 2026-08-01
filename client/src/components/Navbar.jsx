@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-gray-50 text-black shadow-md sticky top-0 z-50">
+      <nav className="bg-gray-50 text-black shadow-md sticky top-0 z-99">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           
           {/* Main Top Bar */}
